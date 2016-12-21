@@ -3,9 +3,6 @@ var path = require("path");
 var bodyParser = require("body-parser");
 var admin = require("firebase-admin");
 
-var app = express();
-//app.use(express.static(__dirname + "/public"));
-app.use(bodyParser.json());
 
 
 
@@ -17,9 +14,13 @@ admin.initializeApp({
   }),
   databaseURL: process.env.DATABASE_URL
 });
+var db = admin.database();
+var ref = db.ref();
 
 
 // Initialize the app.
+var app = express();
+app.use(bodyParser.json());
 var server = app.listen(process.env.PORT || 8080, function () {
   var port = server.address().port;
   console.log("App now running on port", port);
@@ -31,16 +32,10 @@ var server = app.listen(process.env.PORT || 8080, function () {
 
 app.get("/ping", function(req, res) {
 
-  admin.auth().getUser("as8Rf5YctVZxwasHBZavj2Ohyw83")
-    .then(function(userRecord) {
-      // See the tables below for the contents of userRecord
-      console.log("Successfully fetched user data:", userRecord.toJSON());
-      res.status(200).json({"result": "bien"});
-    })
-    .catch(function(error) {
-      console.log("Error fetching user data:", error);
-      res.status(200).json({"result": "mal"});
-    });
-
+  ref.once("value", function(snapshot) {
+    res.status(200).json({"result": snapshot.val()});
+  }, function (errorObject) {
+    res.status(200).json({"error": errorObject});
+  });
 
 });
