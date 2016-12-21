@@ -1,0 +1,25 @@
+{
+  "name": "sm-services",
+  "version": "1.0.0",
+  "description": "sm services",
+  "main": "server.js",
+  "scripts": {
+    "serve": "heroku local web",
+    "deploy": "git push heroku master && heroku ps:scale web=1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tinchodias/sm-services.git"
+  },
+  "author": "tinchodias@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tinchodias/sm-services/issues"
+  },
+  "homepage": "https://github.com/tinchodias/sm-services#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  }
+}
