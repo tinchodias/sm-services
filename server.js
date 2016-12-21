@@ -46,16 +46,83 @@ app.get("/ping", function(req, res) {
 });
 
 
-app.get("/miii", function(req, res) {
 
-  ref.once("value", function(snapshot) {
+app.get("/me/:id", function(req, res) {
 
-    FB.api('me', { fields: ['id', 'name'], access_token: snapshot.val().users[0].lastAccessToken }, function (res) {
-      console.log(":D");
-      console.log(res);
-      res.status(200).json(res);
+  admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(snapshot) {
+
+    FB.api('me', { fields: ['id', 'name'], access_token: snapshot.val() }, function (fbres) {
+      res.status(200).json(fbres);
     });
 
+  }, function (errorObject) {
+    res.status(200).json({"error": errorObject});
+  });
+
+});
+
+
+
+app.get("/me/:id/photos", function(req, res) {
+
+  admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(snapshot) {
+
+    FB.api('me/photos', { fields:'id, picture,  name', access_token: snapshot.val() }, function (fbres) {
+      res.status(200).json(fbres);
+    });
+
+  }, function (errorObject) {
+    res.status(200).json({"error": errorObject});
+  });
+
+});
+
+
+
+/*
+app.get("/me/:id/photos2", function(req, res) {
+
+FB.api('oauth/access_token', {
+    client_id    : process.env.FACEBOOK_APP_ID,
+    client_secret: process.env.FACEBOOK_APP_SECRET,
+    grant_type: 'client_credentials'
+//    redirect_uri: 'http://yoururl.com/callback'
+}, function (fbres) {
+    if(!fbres || fbres.error) {
+        console.log(!fbres ? 'error occurred' : fbres.error);
+        return;
+    }
+
+    var accessToken = fbres.access_token;
+    FB.api('10157867157070537/photos', { fields:'id, picture,  name', access_token: accessToken }, function (fbres2) {
+      res.status(200).json(fbres2);
+    });
+
+});
+
+});
+*/
+
+
+
+app.get("/extendToken/:id", function(req, res) {
+
+
+  admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(snapshot) {
+
+  FB.api('oauth/access_token', {
+     client_id    : process.env.FACEBOOK_APP_ID,
+      client_secret: process.env.FACEBOOK_APP_SECRET,
+      grant_type: 'fb_exchange_token',
+      fb_exchange_token: snapshot.val()
+  }, function (fbres) {
+      if(!fbres || fbres.error) {
+          console.log(!fbres ? 'error occurred' : fbres.error);
+          return;
+      }
+
+      res.status(200).json(fbres);
+  });
 
   }, function (errorObject) {
     res.status(200).json({"error": errorObject});
