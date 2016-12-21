@@ -4,8 +4,9 @@
   "description": "sm services",
   "main": "server.js",
   "scripts": {
+    "setupDyno": "heroku ps:scale web=1",
     "serve": "heroku local web",
-    "deploy": "git push heroku master && heroku ps:scale web=1",
+    "deploy": "git push heroku master",
     "start": "node server.js"
   },
   "repository": {
