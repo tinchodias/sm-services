@@ -46,18 +46,26 @@ app.get("/ping", function(req, res) {
 });
 
 
-app.get("/ping", function(req, res) {
 
-  console.log("UPDATING SUPER TIMESTAMP");
-  var newRef = firebase.database().ref('timestamps').push();
-  newRef.set(+ new Date());
+app.get("/peng", function(req, res) {
 
-  ref.once("value", function(snapshot) {
-    res.status(200).json({"result": snapshot.val()});
-  }, function (errorObject) {
-    res.status(200).json({"error": errorObject});
-  });
+  var newRef = admin.database().ref('/timestamps/peng').push();
+  var timestampSuper = (+ new Date());
+  newRef.set(timestampSuper);
+  res.status(200).json({"result": "listoooeee"});
+});
 
+
+
+app.get("/pong", function(req, res) {
+
+  var timestampSuper = (+ new Date());
+
+  var updates = {};
+  updates['/timestamps/pong'] = timestampSuper;
+  admin.database().ref().update(updates);
+
+  res.status(200).json({"result": "listooo"});
 });
 
 
