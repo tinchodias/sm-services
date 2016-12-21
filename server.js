@@ -46,6 +46,26 @@ app.get("/ping", function(req, res) {
 });
 
 
+app.get("/ping", function(req, res) {
+
+  console.log("UPDATING SUPER TIMESTAMP");
+  var newRef = firebase.database().ref('timestamps').push();
+  newRef.set(+ new Date());
+
+  ref.once("value", function(snapshot) {
+    res.status(200).json({"result": snapshot.val()});
+  }, function (errorObject) {
+    res.status(200).json({"error": errorObject});
+  });
+
+});
+
+
+
+  
+
+
+
 
 app.get("/me/:id", function(req, res) {
 
@@ -76,6 +96,10 @@ app.get("/me/:id/photos", function(req, res) {
   });
 
 });
+
+
+
+
 
 
 
