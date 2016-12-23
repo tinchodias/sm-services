@@ -9,6 +9,7 @@ var fb = new FB.Facebook({
 /* FACEBOOK */
 
 
+
 /* FIREBASE */
 var admin = require("firebase-admin");
 admin.initializeApp({
@@ -20,6 +21,16 @@ admin.initializeApp({
   databaseURL: process.env.DATABASE_URL
 });
 /* FIREBASE */
+
+
+
+/* SOCIAL MIRROR */
+var async = require("async");
+var q = require("q");
+
+var SocialMirrorFB = require("./social-mirror-fb");
+var smfb = new SocialMirrorFB(FB, async, q);
+/* SOCIAL MIRROR */
 
 
 
@@ -48,7 +59,7 @@ app.get("/ping", function(req, res) {
   admin.database().ref().once("value", function(snapshot) {
     res.status(200).json({"result": snapshot.val()});
   }, function (errorObject) {
-    res.status(200).json({"error": errorObject});
+    res.status(500).json({"error": errorObject});
   });
 
 });
@@ -78,7 +89,7 @@ app.get("/pong", function(req, res) {
 
 
 
-app.get("/me/:id", function(req, res) {
+app.get("/:id/me", function(req, res) {
 
   admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(snapshot) {
 
@@ -94,45 +105,26 @@ app.get("/me/:id", function(req, res) {
 
 
 
-app.get("/me/:id/photos", function(req, res) {
+app.get("/refreshPhotos/:id", function(req, res) {
 
-  admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(snapshot) {
+  admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(accessToken) {
 
-    FB.api('me/photos', { fields:'id, picture,  name', access_token: snapshot.val() }, function (fbres) {
-      res.status(200).json(fbres);
-    });
+    smfb.getAllPhotos(accessToken.val())
+      .then(function(fbres) {
 
-  }, function (errorObject) {
-    res.status(200).json({"error": errorObject});
+        admin.database().ref('/public/tinchodias').set({
+          'lastUpdate': (+ new Date()),
+          'allPhotos': fbres
+        });
+
+        res.status(200).end();
+      }, function (errorObject) {
+        res.status(500).json({"error": errorObject});
+      });
   });
 
 });
 
-
-
-/*
-app.get("/me/:id/photos2", function(req, res) {
-
-FB.api('oauth/access_token', {
-    client_id    : process.env.FACEBOOK_APP_ID,
-    client_secret: process.env.FACEBOOK_APP_SECRET,
-    grant_type: 'client_credentials'
-//    redirect_uri: 'http://yoururl.com/callback'
-}, function (fbres) {
-    if(!fbres || fbres.error) {
-        console.log(!fbres ? 'error occurred' : fbres.error);
-        return;
-    }
-
-    var accessToken = fbres.access_token;
-    FB.api('10157867157070537/photos', { fields:'id, picture,  name', access_token: accessToken }, function (fbres2) {
-      res.status(200).json(fbres2);
-    });
-
-});
-
-});
-*/
 
 
 
