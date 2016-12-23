@@ -1,16 +1,16 @@
-var express = require("express");
-var path = require("path");
-var bodyParser = require("body-parser");
-var admin = require("firebase-admin");
-var FB = require('fb');
 
+/* FACEBOOK */
+var FB = require('fb');
 var fb = new FB.Facebook({
     appId      : process.env.FACEBOOK_APP_ID,
     appSecret  : process.env.FACEBOOK_APP_SECRET,
     version    : 'v2.8'
   });
+/* FACEBOOK */
 
 
+/* FIREBASE */
+var admin = require("firebase-admin");
 admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.PROJECT_ID,
@@ -19,10 +19,14 @@ admin.initializeApp({
   }),
   databaseURL: process.env.DATABASE_URL
 });
-var db = admin.database();
-var ref = db.ref();
+/* FIREBASE */
 
 
+
+/* EXPRESS */
+var express = require("express");
+var path = require("path");
+var bodyParser = require("body-parser");
 // Initialize the app.
 var app = express();
 app.use(bodyParser.json());
@@ -30,14 +34,18 @@ var server = app.listen(process.env.PORT || 8080, function () {
   var port = server.address().port;
   console.log("App now running on port", port);
 });
+/* EXPRESS */
 
 
 
+
+
+/* --- API --- */
 
 
 app.get("/ping", function(req, res) {
 
-  ref.once("value", function(snapshot) {
+  admin.database().ref().once("value", function(snapshot) {
     res.status(200).json({"result": snapshot.val()});
   }, function (errorObject) {
     res.status(200).json({"error": errorObject});
@@ -70,11 +78,6 @@ app.get("/pong", function(req, res) {
 
 
 
-  
-
-
-
-
 app.get("/me/:id", function(req, res) {
 
   admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(snapshot) {
@@ -104,10 +107,6 @@ app.get("/me/:id/photos", function(req, res) {
   });
 
 });
-
-
-
-
 
 
 
