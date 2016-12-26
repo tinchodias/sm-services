@@ -66,28 +66,6 @@ app.get("/ping", function(req, res) {
 
 
 
-app.get("/peng", function(req, res) {
-
-  var newRef = admin.database().ref('/timestamps/peng').push();
-  var timestampSuper = (+ new Date());
-  newRef.set(timestampSuper);
-  res.status(200).json({"result": "listoooeee"});
-});
-
-
-
-app.get("/pong", function(req, res) {
-
-  var timestampSuper = (+ new Date());
-
-  var updates = {};
-  updates['/timestamps/pong'] = timestampSuper;
-  admin.database().ref().update(updates);
-
-  res.status(200).json({"result": "listooo"});
-});
-
-
 
 app.get("/:id/me", function(req, res) {
 
@@ -130,26 +108,49 @@ app.get("/refreshPhotos/:id", function(req, res) {
 
 app.get("/extendToken/:id", function(req, res) {
 
-
   admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(snapshot) {
 
-  FB.api('oauth/access_token', {
-     client_id    : process.env.FACEBOOK_APP_ID,
-      client_secret: process.env.FACEBOOK_APP_SECRET,
-      grant_type: 'fb_exchange_token',
-      fb_exchange_token: snapshot.val()
-  }, function (fbres) {
-      if(!fbres || fbres.error) {
+    FB.api('oauth/access_token', {
+        client_id    : process.env.FACEBOOK_APP_ID,
+        client_secret: process.env.FACEBOOK_APP_SECRET,
+        grant_type: 'fb_exchange_token',
+        fb_exchange_token: snapshot.val()
+      }, function (fbres) {
+        if(!fbres || fbres.error) {
           console.log(!fbres ? 'error occurred' : fbres.error);
           return;
-      }
-
-      res.status(200).json(fbres);
-  });
+        }
+        res.status(200).json(fbres);
+    });
 
   }, function (errorObject) {
     res.status(200).json({"error": errorObject});
   });
 
-
 });
+
+
+
+
+/*
+app.get("/peng", function(req, res) {
+
+  var newRef = admin.database().ref('/timestamps/peng').push();
+  var timestampSuper = (+ new Date());
+  newRef.set(timestampSuper);
+  res.status(200).json({"result": "listoooeee"});
+});
+
+
+
+app.get("/pong", function(req, res) {
+
+  var timestampSuper = (+ new Date());
+
+  var updates = {};
+  updates['/timestamps/pong'] = timestampSuper;
+  admin.database().ref().update(updates);
+
+  res.status(200).json({"result": "listooo"});
+});
+*/
