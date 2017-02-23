@@ -27,7 +27,6 @@ admin.initializeApp({
 /* SOCIAL MIRROR */
 var async = require("async");
 var q = require("q");
-
 var SocialMirrorFB = require("./social-mirror-fb");
 var smfb = new SocialMirrorFB(FB, async, q);
 /* SOCIAL MIRROR */
@@ -53,20 +52,7 @@ var server = app.listen(process.env.PORT || 8080, function () {
 
 /* --- API --- */
 
-
-app.get("/ping", function(req, res) {
-
-  admin.database().ref().once("value", function(snapshot) {
-    res.status(200).json({"result": snapshot.val()});
-  }, function (errorObject) {
-    res.status(500).json({"error": errorObject});
-  });
-
-});
-
-
-
-
+/*
 app.get("/:id/me", function(req, res) {
 
   admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(snapshot) {
@@ -80,22 +66,21 @@ app.get("/:id/me", function(req, res) {
   });
 
 });
+*/
 
+app.get("/refresh/:id", function(req, res) {
 
+  admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
 
-app.get("/refreshPhotos/:id", function(req, res) {
-
-  admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(accessToken) {
-
-    smfb.getAllPhotos(accessToken.val())
+    smfb.getData(accessToken.val())
       .then(function(fbres) {
 
         admin.database().ref('/public/tinchodias').set({
-          'lastUpdate': (+ new Date()),
-          'allPhotos': fbres
+          'last_update': (+ new Date()),
+          'data': fbres
         });
 
-        res.status(200).end();
+        res.status(200).json(fbres);
       }, function (errorObject) {
         res.status(500).json({"error": errorObject});
       });
@@ -105,6 +90,8 @@ app.get("/refreshPhotos/:id", function(req, res) {
 
 
 
+/*
+todo: IS THIS NEEDED?
 
 app.get("/extendToken/:id", function(req, res) {
 
@@ -128,9 +115,7 @@ app.get("/extendToken/:id", function(req, res) {
   });
 
 });
-
-
-
+*/
 
 /*
 app.get("/peng", function(req, res) {
@@ -139,18 +124,5 @@ app.get("/peng", function(req, res) {
   var timestampSuper = (+ new Date());
   newRef.set(timestampSuper);
   res.status(200).json({"result": "listoooeee"});
-});
-
-
-
-app.get("/pong", function(req, res) {
-
-  var timestampSuper = (+ new Date());
-
-  var updates = {};
-  updates['/timestamps/pong'] = timestampSuper;
-  admin.database().ref().update(updates);
-
-  res.status(200).json({"result": "listooo"});
 });
 */
