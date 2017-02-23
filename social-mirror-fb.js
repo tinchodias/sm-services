@@ -116,13 +116,13 @@ SocialMirrorFB.prototype.getData = function(accessToken) {
 
   this.async.parallel({
       photos: function(callback) {
-        this.getAllPhotos(accessToken).then(callback);
+        self.getAllPhotos(accessToken).then(callback);
       },
       albums: function(callback) {
-        this.getAllAlbums(accessToken).then(callback);
+        self.getAllAlbums(accessToken).then(callback);
       },
       accounts: function(callback) {
-        this.getAllAccounts(accessToken).then(callback);
+        self.getAllAccounts(accessToken).then(callback);
       }
   }, function(error, results) {
     if (error) { deferred.reject(error) }
