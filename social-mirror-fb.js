@@ -89,7 +89,7 @@ SocialMirrorFB.prototype.getAllAlbums = function(accessToken) {
       comments: (album.comments ? album.comments.data.length : 0)
     }
   };
-  return this.getAll('/me/albums', 'id,name,description,created_time,count,cover_photo{id},link,reactions.limit(99){type},comments.limit(99){id}', accessToken, photoMapFunction);
+  return this.getAll('/me/albums', 'id,name,description,created_time,count,cover_photo{id},link,reactions.limit(99){type},comments.limit(99){id}', accessToken, albumMapFunction);
 };
 
 
