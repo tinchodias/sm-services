@@ -56,21 +56,19 @@ app.get("/refresh/:id", function(req, res) {
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
 
     console.log("1");
-    smfb.getData(accessToken.val())
+    smfb.getAllPhotos(accessToken.val())
       .then(function(fbres) {
-
+/*
         console.log(fbres.accounts);
         console.log(fbres.albums);
         console.log(fbres.photos);
         console.log(fbres.accounts.length);
         console.log(fbres.albums.length);
         console.log(fbres.photos.length);
-
+*/
         admin.database().ref("private/users/" + req.params.id + "/last_data").set({
           'timestamp': (+ new Date()),
-//          'photos': fbres.photos,
-          'albums': fbres.albums,
-          'accounts': fbres.accounts
+          'data': fbres
         }).then(console.log, console.log);
 
         console.log("3");
