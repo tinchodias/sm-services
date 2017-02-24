@@ -75,7 +75,7 @@ app.get("/refresh/:id", function(req, res) {
     smfb.getData(accessToken.val())
       .then(function(fbres) {
 
-        admin.database().ref('/public/tinchodias').set({
+        admin.database().ref("private/users/" + req.params.id + "/last_data").set({
           'last_update': (+ new Date()),
           'data': fbres
         });
