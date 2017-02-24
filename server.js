@@ -68,8 +68,8 @@ app.get("/refresh/:id", function(req, res) {
 
         admin.database().ref("private/users/" + req.params.id + "/last_data").set({
           'timestamp': (+ new Date()),
-          'photos': fbres.photos,
-//          'albums': fbres.albums,
+//          'photos': fbres.photos,
+          'albums': fbres.albums,
           'accounts': fbres.accounts
         }).then(console.log, console.log);
 
