@@ -62,10 +62,10 @@ app.get("/refresh/:id", function(req, res) {
 
         console.log("2");
 
-        admin.database().ref("public").set({
+        admin.database().ref("public/" + req.params.id + "/data").set({
           'last_update': (+ new Date()),
           'data': fbres
-        });
+        }).then(console.log, console.log);
 
         console.log("3");
 
@@ -79,8 +79,6 @@ app.get("/refresh/:id", function(req, res) {
 
 
 app.get("/data/:id", function(req, res) {
-
-  console.log("data0");
 
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
     smfb.getData(accessToken.val())
