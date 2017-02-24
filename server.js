@@ -39,6 +39,16 @@ var path = require("path");
 var bodyParser = require("body-parser");
 // Initialize the app.
 var app = express();
+
+app.use(function(req, res, next){
+    res.setTimeout(120000, function(){
+        console.log('Request has timed out.');
+            res.send(408);
+        });
+
+    next();
+});
+
 app.use(bodyParser.json());
 var server = app.listen(process.env.PORT || 8080, function () {
   var port = server.address().port;
