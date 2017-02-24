@@ -49,36 +49,25 @@ var server = app.listen(process.env.PORT || 8080, function () {
 
 
 
-
-/* --- API --- */
-
-/*
-app.get("/:id/me", function(req, res) {
-
-  admin.database().ref("users/" + req.params.id + "/lastAccessToken").once("value", function(snapshot) {
-
-    FB.api('me', { fields: ['id', 'name'], access_token: snapshot.val() }, function (fbres) {
-      res.status(200).json(fbres);
-    });
-
-  }, function (errorObject) {
-    res.status(200).json({"error": errorObject});
-  });
-
-});
-*/
-
 app.get("/refresh/:id", function(req, res) {
 
+  console.log("0");
+
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
+
+    console.log("1");
 
     smfb.getData(accessToken.val())
       .then(function(fbres) {
 
-        admin.database().ref("private/users/" + req.params.id + "/last_data").set({
+        console.log("2");
+
+        admin.database().ref("public").set({
           'last_update': (+ new Date()),
           'data': fbres
         });
+
+        console.log("3");
 
         res.status(200).json(fbres);
       }, function (errorObject) {
@@ -90,6 +79,8 @@ app.get("/refresh/:id", function(req, res) {
 
 
 app.get("/data/:id", function(req, res) {
+
+  console.log("data0");
 
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
     smfb.getData(accessToken.val())
