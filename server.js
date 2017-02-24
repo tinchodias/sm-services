@@ -59,12 +59,17 @@ app.get("/refresh/:id", function(req, res) {
     smfb.getData(accessToken.val())
       .then(function(fbres) {
 
-        console.log("2");
+        console.log(fbres.accounts);
+        console.log(fbres.albums);
+        console.log(fbres.photos);
+        console.log(fbres.accounts.length);
+        console.log(fbres.albums.length);
+        console.log(fbres.photos.length);
 
         admin.database().ref("private/users/" + req.params.id + "/last_data").set({
           'timestamp': (+ new Date()),
           'photos': fbres.photos,
-          'albums': fbres.albums,
+//          'albums': fbres.albums,
           'accounts': fbres.accounts
         }).then(console.log, console.log);
 
