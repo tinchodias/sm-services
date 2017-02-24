@@ -1,4 +1,6 @@
 
+console.log(process.env);
+
 /* FACEBOOK */
 var FB = require('fb');
 var fb = new FB.Facebook({
