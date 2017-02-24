@@ -133,7 +133,7 @@ SocialMirrorFB.prototype.getData = function(accessToken) {
           function(e) { callback(e) }
         );
       }
-  }, function(error, results) {
+  }, function(error, data) {
     if (error) { deferred.reject(error) }
     else { deferred.resolve(data) }
   });
