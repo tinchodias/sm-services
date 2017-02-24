@@ -56,22 +56,15 @@ app.get("/refresh/:id", function(req, res) {
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
 
     console.log("1");
-
-    admin.database().ref("public/users/" + req.params.id + "/data").set({
-      'last_update': (+ new Date()),
-    }).then(console.log, console.log);
-
-
-    console.log("1.5");
-
-
     smfb.getData(accessToken.val())
       .then(function(fbres) {
 
         console.log("2");
 
-        admin.database().ref("public/users/" + req.params.id + "/data").set({
-          'last_update': (+ new Date()),
+        admin.database().ref("private/users/" + req.params.id + "/last_data").set({
+          'timestamp': (+ new Date()),
+          'photos': fbres.photos,
+          'albums': fbres.albums,
           'accounts': fbres.accounts
         }).then(console.log, console.log);
 
