@@ -88,7 +88,44 @@ app.get("/refresh/:id", function(req, res) {
 
 });
 
+app.get("/photos/:id", function(req, res) {
 
+  admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
+    smfb.getAllPhotos(accessToken.val())
+      .then(function(fbres) {
+        res.status(200).json(fbres);
+      }, function (errorObject) {
+        res.status(500).json({"error": errorObject});
+      });
+  });
+
+});
+
+app.get("/albums/:id", function(req, res) {
+
+  admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
+    smfb.getAllAlbums(accessToken.val())
+      .then(function(fbres) {
+        res.status(200).json(fbres);
+      }, function (errorObject) {
+        res.status(500).json({"error": errorObject});
+      });
+  });
+
+});
+
+app.get("/accounts/:id", function(req, res) {
+
+  admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
+    smfb.getAllAccounts(accessToken.val())
+      .then(function(fbres) {
+        res.status(200).json(fbres);
+      }, function (errorObject) {
+        res.status(500).json({"error": errorObject});
+      });
+  });
+
+});
 
 /*
 todo: IS THIS NEEDED?
