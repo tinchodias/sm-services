@@ -72,7 +72,7 @@ app.get("/refresh/:id", function(req, res) {
 
         admin.database().ref("public/users/" + req.params.id + "/data").set({
           'last_update': (+ new Date()),
-          'data': fbres
+          'accounts': fbres.accounts
         }).then(console.log, console.log);
 
         console.log("3");
