@@ -97,7 +97,7 @@ SocialMirrorFB.prototype.getAllAccounts = function(accessToken) {
 
   var deferred = this.q.defer();
 
-  this.fb.api("/me/accounts", { fields: [], access_token: accessToken },
+  this.fb.api("/me/accounts", { fields: 'id,name,picture{url}', access_token: accessToken },
     function(response) {
       if (response.error) { deferred.reject(response.error) }
       else { deferred.resolve(response.data) }

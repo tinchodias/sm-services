@@ -56,7 +56,7 @@ app.get("/refresh/:id", function(req, res) {
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
 
     console.log("1");
-    smfb.getAllAccounts(accessToken.val())
+    smfb.getAllAlbums(accessToken.val())
       .then(function(fbres) {
 /*
         console.log(fbres.accounts);
