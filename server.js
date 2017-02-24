@@ -152,7 +152,7 @@ app.get("/extendToken/:id", function(req, res) {
         client_id    : process.env.FACEBOOK_APP_ID,
         client_secret: process.env.FACEBOOK_APP_SECRET,
         grant_type: 'fb_exchange_token',
-        fb_exchange_token: snapshot.val()
+        fb_exchange_token: accessToken.val()
       }, function (fbres) {
         if(!fbres || fbres.error) {
           console.log(!fbres ? 'error occurred' : fbres.error);
