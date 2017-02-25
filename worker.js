@@ -1,8 +1,5 @@
 
-
 console.log("Worker starting...");
-
-var Queue = require('firebase-queue');
 
 
 /* FIREBASE */
@@ -15,11 +12,12 @@ admin.initializeApp({
   }),
   databaseURL: process.env.DATABASE_URL
 });
+var queueRef = admin.database().ref('queue');
 /* FIREBASE */
 
 
-var ref = admin.database().ref('queue');
-var queue = new Queue(ref, function(data, progress, resolve, reject) {
+var Queue = require('firebase-queue');
+var queue = new Queue(queueRef, function(data, progress, resolve, reject) {
   // Read and process task data
   console.log(data);
 
@@ -30,4 +28,14 @@ var queue = new Queue(ref, function(data, progress, resolve, reject) {
   setTimeout(function() {
     resolve();
   }, 1000);
+});
+
+
+// https://github.com/firebase/firebase-queue/blob/master/docs/guide.md#graceful-shutdown
+process.on('SIGINT', function() {
+  console.log('Starting graceful queue shutdown ;-)');
+  queue.shutdown().then(function() {
+    console.log('Finished graceful queue shutdown ;-)');
+    process.exit(0);
+  });
 });
