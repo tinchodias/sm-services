@@ -66,6 +66,7 @@ app.get("/schedule", function(req, res) {
     'scheduled': (+ new Date())
   });
 
+  res.status(200).end();
 });
 
 
