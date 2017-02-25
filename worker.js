@@ -27,7 +27,8 @@ var queue = new Queue(queueRef, function(data, progress, resolve, reject) {
   // Finish the task asynchronously
   setTimeout(function() {
     resolve();
-  }, 1000);
+  }, 2000);
+
 });
 
 

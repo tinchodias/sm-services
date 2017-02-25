@@ -59,6 +59,16 @@ app.use(function(req, res, next){
 
 
 
+app.get("/schedule", function(req, res) {
+
+  var tasksRef = admin.database().ref('queue/tasks');
+  tasksRef.push({
+    'scheduled': (+ new Date())
+  });
+
+});
+
+
 app.get("/refresh/:id", function(req, res) {
 
   console.log("0");
