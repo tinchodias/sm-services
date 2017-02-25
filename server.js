@@ -1,5 +1,5 @@
 
-console.log(process.env);
+console.log("Starting web...");
 
 /* FACEBOOK */
 var FB = require('fb');
