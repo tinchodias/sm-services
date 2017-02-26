@@ -33,7 +33,7 @@ SocialMirrorFB.prototype.getAll = function(resource, fields, accessToken, mapFun
   var after = '';
   var self = this;
 
-  self.async.doWhilst(function (callback) {
+  async.doWhilst(function (callback) {
 
     self.fb.api(resource, {
       fields: fields,
