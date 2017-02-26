@@ -11,7 +11,7 @@ function SocialMirrorFB(facebookOptions) {
 
 
 
-SocialMirrorFB.prototype.getOne = function(resource, fields, accessToken, mapFunction) {
+SocialMirrorFB.prototype.resourceCollect = function(resource, fields, accessToken, mapFunction) {
 
   var deferred = q.defer();
 
@@ -25,7 +25,7 @@ SocialMirrorFB.prototype.getOne = function(resource, fields, accessToken, mapFun
 };
 
 
-SocialMirrorFB.prototype.getAll = function(resource, fields, accessToken, mapFunction) {
+SocialMirrorFB.prototype.allResourcesCollect = function(resource, fields, accessToken, mapFunction) {
 
   var deferred = q.defer();
   var data = [];
@@ -69,7 +69,7 @@ SocialMirrorFB.prototype.getAll = function(resource, fields, accessToken, mapFun
 
 
 
-SocialMirrorFB.prototype.getAllPhotos = function(accessToken, profileId = 'me') {
+SocialMirrorFB.prototype.photos = function(accessToken, profileId = 'me') {
   var photoMapFunction = function(photo) {
     return {
       id: photo.id,
@@ -85,11 +85,11 @@ SocialMirrorFB.prototype.getAllPhotos = function(accessToken, profileId = 'me') 
       comments: (photo.comments ? photo.comments.data.length : 0)
     }
   };
-  return this.getAll('/' + profileId + '/photos/uploaded', 'id,name,picture,album{id},images{source,width,height},created_time,link,reactions.limit(99){type},comments.limit(99){id}', accessToken, photoMapFunction);
+  return this.allResourcesCollect('/' + profileId + '/photos/uploaded', 'id,name,picture,album{id},images{source,width,height},created_time,link,reactions.limit(99){type},comments.limit(99){id}', accessToken, photoMapFunction);
 };
 
 
-SocialMirrorFB.prototype.getAllAlbums = function(accessToken, profileId = 'me') {
+SocialMirrorFB.prototype.albums = function(accessToken, profileId = 'me') {
   var albumMapFunction = function(album) {
     return {
       id: album.id,
@@ -103,11 +103,11 @@ SocialMirrorFB.prototype.getAllAlbums = function(accessToken, profileId = 'me') 
       comments: (album.comments ? album.comments.data.length : 0)
     }
   };
-  return this.getAll('/' + profileId + '/albums', 'id,name,description,created_time,count,cover_photo{id},link,reactions.limit(99){type},comments.limit(99){id}', accessToken, albumMapFunction);
+  return this.allResourcesCollect('/' + profileId + '/albums', 'id,name,description,created_time,count,cover_photo{id},link,reactions.limit(99){type},comments.limit(99){id}', accessToken, albumMapFunction);
 };
 
 
-SocialMirrorFB.prototype.getAllAccounts = function(accessToken) {
+SocialMirrorFB.prototype.pages = function(accessToken) {
 
   var profileMapFunction = function(profile) {
     return {
@@ -116,7 +116,7 @@ SocialMirrorFB.prototype.getAllAccounts = function(accessToken) {
       thumb: profile.picture.data.url,
     }
   };
-  return this.getAll('/me/accounts', 'id,name,picture{url}', accessToken, profileMapFunction);
+  return this.allResourcesCollect('/me/accounts', 'id,name,picture{url}', accessToken, profileMapFunction);
 };
 
 
@@ -129,11 +129,11 @@ SocialMirrorFB.prototype.getMe = function(accessToken) {
       thumb: profile.picture.data.url,
     }
   };
-  return this.getOne('/me', 'id,name,picture{url}', accessToken, profileMapFunction);
+  return this.resourceCollect('/me', 'id,name,picture{url}', accessToken, profileMapFunction);
 };
 
 
-SocialMirrorFB.prototype.getAllProfiles = function(accessToken) {
+SocialMirrorFB.prototype.profiles = function(accessToken) {
 
   var deferred = q.defer();
   var self = this;
@@ -146,7 +146,7 @@ SocialMirrorFB.prototype.getAllProfiles = function(accessToken) {
         );
       },
       pages: function(callback) {
-        self.getAllAccounts(accessToken).then(
+        self.pages(accessToken).then(
           function(d) { callback(null, d) },
           function(e) { callback(e) }
         );
@@ -169,19 +169,19 @@ SocialMirrorFB.prototype.getData = function(accessToken) {
 
   async.parallel({
       photos: function(callback) {
-        self.getAllPhotos(accessToken).then(
+        self.photos(accessToken).then(
           function(d) { callback(null, d) },
           function(e) { callback(e) }
         );
       },
       albums: function(callback) {
-        self.getAllAlbums(accessToken).then(
+        self.albums(accessToken).then(
           function(d) { callback(null, d) },
           function(e) { callback(e) }
         );
       },
       accounts: function(callback) {
-        self.getAllAccounts(accessToken).then(
+        self.pages(accessToken).then(
           function(d) { callback(null, d) },
           function(e) { callback(e) }
         );

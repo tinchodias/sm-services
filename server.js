@@ -65,7 +65,7 @@ app.get("/refresh/:id", function(req, res) {
 
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
 
-    smfb.getAllProfiles(accessToken.val())
+    smfb.profiles(accessToken.val())
       .then(function(fbres) {
         admin.database().enableLogging(true).ref("private/users/" + req.params.id + "/last_data").set({
           'timestamp': (+ new Date()),
@@ -85,7 +85,7 @@ app.get("/photos/:id/:profileId?", function(req, res) {
   var profileId = req.params.profileId? req.params.profileId: 'me';
 
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
-    smfb.getAllPhotos(accessToken.val(), profileId)
+    smfb.photos(accessToken.val(), profileId)
       .then(function(fbres) {
         res.status(200).json(fbres);
       }, function (errorObject) {
@@ -100,7 +100,7 @@ app.get("/albums/:id/:profileId?", function(req, res) {
   var profileId = req.params.profileId? req.params.profileId: 'me';
 
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
-    smfb.getAllAlbums(accessToken.val(), profileId)
+    smfb.albums(accessToken.val(), profileId)
       .then(function(fbres) {
         res.status(200).json(fbres);
       }, function (errorObject) {
@@ -114,7 +114,7 @@ app.get("/albums/:id/:profileId?", function(req, res) {
 app.get("/profiles/:id", function(req, res) {
 
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
-    smfb.getAllProfiles(accessToken.val())
+    smfb.profiles(accessToken.val())
       .then(function(fbres) {
         res.status(200).json(fbres);
       }, function (errorObject) {
