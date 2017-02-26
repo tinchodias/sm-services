@@ -105,7 +105,7 @@ app.get("/photos/:id/:profileId?", function(req, res) {
 
 });
 
-app.get("/albums/:id", function(req, res) {
+app.get("/albums/:id/:profileId?", function(req, res) {
 
   var profileId = req.params.profileId? req.params.profileId: 'me';
   console.log("PROFILEID=" + profileId);

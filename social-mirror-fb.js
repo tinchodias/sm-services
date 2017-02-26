@@ -75,7 +75,7 @@ SocialMirrorFB.prototype.getAllPhotos = function(accessToken, profileId = 'me') 
       id: photo.id,
       title: photo.name,
       thumb: photo.picture,
-      album_id: photo.album.id,
+      album_id: (photo.album.id ? photo.album.id : '__no_album__'),
       source: (photo.images[0].source),
       height: (photo.images[0].height),
       width: (photo.images[0].width),
