@@ -120,7 +120,7 @@ SocialMirrorFB.prototype.pages = function(accessToken) {
 };
 
 
-SocialMirrorFB.prototype.getMe = function(accessToken) {
+SocialMirrorFB.prototype.me = function(accessToken) {
 
   var profileMapFunction = function(profile) {
     return {
@@ -140,7 +140,7 @@ SocialMirrorFB.prototype.profiles = function(accessToken) {
 
   async.parallel({
       user: function(callback) {
-        self.getMe(accessToken).then(
+        self.me(accessToken).then(
           function(d) { callback(null, d) },
           function(e) { callback(e) }
         );
