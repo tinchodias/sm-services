@@ -14,7 +14,6 @@ function SocialMirrorFB(facebookOptions) {
 SocialMirrorFB.prototype.getOne = function(resource, fields, accessToken, mapFunction) {
 
   var deferred = q.defer();
-  var self = this;
 
   this.fb.api(resource, { fields: fields, access_token: accessToken },
     function(response) {
@@ -136,8 +135,28 @@ SocialMirrorFB.prototype.getMe = function(accessToken) {
 
 SocialMirrorFB.prototype.getAllProfiles = function(accessToken) {
 
-  var promises = [ this.getMe(accessToken) ].concat(this.getAllAccounts(accessToken));
-  return q.all(promises);
+  var deferred = q.defer();
+  var self = this;
+
+  async.parallel({
+      user: function(callback) {
+        self.getMe(accessToken).then(
+          function(d) { callback(null, d) },
+          function(e) { callback(e) }
+        );
+      },
+      pages: function(callback) {
+        self.getAllAccounts(accessToken).then(
+          function(d) { callback(null, d) },
+          function(e) { callback(e) }
+        );
+      }
+  }, function(error, data) {
+    if (error) { deferred.reject(error) }
+    else { deferred.resolve(data) }
+  });
+
+  return deferred.promise;
 };
 
 
