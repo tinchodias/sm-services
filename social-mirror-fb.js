@@ -117,7 +117,7 @@ SocialMirrorFB.prototype.getAllAccounts = function(accessToken) {
     }
   };
   return this.getAll('/me/accounts', 'id,name,picture{url}', accessToken, profileMapFunction);
-});
+};
 
 
 SocialMirrorFB.prototype.getMe = function(accessToken) {
@@ -137,7 +137,7 @@ SocialMirrorFB.prototype.getAllProfiles = function(accessToken) {
 
   var promises = [ this.getMe(accessToken) ].concat(this.getAllAccounts(accessToken));
   return this.q.all(promises);
-});
+};
 
 
 
