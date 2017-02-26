@@ -10,7 +10,22 @@ function SocialMirrorFB(fb, async, q) {
 
 
 
-SocialMirrorFB.prototype.getAll = function(resource, fields, accessToken, photoMapFunction) {
+SocialMirrorFB.prototype.getOne = function(resource, fields, accessToken, mapFunction) {
+
+  var deferred = this.q.defer();
+  var self = this;
+
+  this.fb.api(resource, { fields: fields, access_token: accessToken },
+    function(response) {
+      if (response.error) { deferred.reject(response.error) }
+      else { deferred.resolve(response.data.map(mapFunction)) }
+    });
+
+  return deferred.promise;
+};
+
+
+SocialMirrorFB.prototype.getAll = function(resource, fields, accessToken, mapFunction) {
 
   var deferred = this.q.defer();
   var data = [];
@@ -22,15 +37,15 @@ SocialMirrorFB.prototype.getAll = function(resource, fields, accessToken, photoM
     self.fb.api(resource, {
       fields: fields,
       limit: '200',
-      type: 'uploaded',
+//      type: 'uploaded',
       after: after,
       access_token: accessToken
     }, function(response) {
 //      console.log(response);
-      if (!response || response.error) {
+      if (/*!response || */response.error) {
         callback(response.error);
       } else {
-        data = data.concat(response.data.map(photoMapFunction));
+        data = data.concat(response.data.map(mapFunction));
         if (response.paging && response.paging.next) {  // next is the best indicator to know if there are more
           after = response.paging.cursors.after;
         } else {
@@ -54,7 +69,7 @@ SocialMirrorFB.prototype.getAll = function(resource, fields, accessToken, photoM
 
 
 
-SocialMirrorFB.prototype.getAllPhotos = function(accessToken) {
+SocialMirrorFB.prototype.getAllPhotos = function(accessToken, profileId = 'me') {
   var photoMapFunction = function(photo) {
     return {
       id: photo.id,
@@ -70,12 +85,11 @@ SocialMirrorFB.prototype.getAllPhotos = function(accessToken) {
       comments: (photo.comments ? photo.comments.data.length : 0)
     }
   };
-
-  return this.getAll('/me/photos', 'id,name,picture,album{id},images{source,width,height},created_time,link,reactions.limit(99){type},comments.limit(99){id}', accessToken, photoMapFunction);
+  return this.getAll('/' + profileId + '/photos', 'id,name,picture,album{id},images{source,width,height},created_time,link,reactions.limit(99){type},comments.limit(99){id}', accessToken, photoMapFunction);
 };
 
 
-SocialMirrorFB.prototype.getAllAlbums = function(accessToken) {
+SocialMirrorFB.prototype.getAllAlbums = function(accessToken, profileId = 'me') {
   var albumMapFunction = function(album) {
     return {
       id: album.id,
@@ -89,26 +103,45 @@ SocialMirrorFB.prototype.getAllAlbums = function(accessToken) {
       comments: (album.comments ? album.comments.data.length : 0)
     }
   };
-  return this.getAll('/me/albums', 'id,name,description,created_time,count,cover_photo{id},link,reactions.limit(99){type},comments.limit(99){id}', accessToken, albumMapFunction);
+  return this.getAll('/' + profileId + '/albums', 'id,name,description,created_time,count,cover_photo{id},link,reactions.limit(99){type},comments.limit(99){id}', accessToken, albumMapFunction);
 };
 
 
 SocialMirrorFB.prototype.getAllAccounts = function(accessToken) {
 
-  var deferred = this.q.defer();
+  var profileMapFunction = function(profile) {
+    return {
+      id: profile.id,
+      title: profile.name,
+      thumb: profile.picture.data.url,
+    }
+  };
+  return this.getAll('/me/accounts', 'id,name,picture{url}', accessToken, profileMapFunction);
+});
 
-  this.fb.api("/me/accounts", { fields: 'id,name', access_token: accessToken },
-    function(response) {
-      if (response.error) { deferred.reject(response.error) }
-      else { deferred.resolve(response.data) }
-    });
 
-  return deferred.promise;
+SocialMirrorFB.prototype.getMe = function(accessToken) {
+
+  var profileMapFunction = function(profile) {
+    return {
+      id: profile.id,
+      title: profile.name,
+      thumb: profile.picture.data.url,
+    }
+  };
+  return this.getOne('/me', 'id,name,picture{url}', accessToken, profileMapFunction);
 };
 
 
+SocialMirrorFB.prototype.getAllProfiles = function(accessToken) {
+
+  var promises = [ this.getMe(accessToken) ].concat(this.getAllAccounts(accessToken));
+  return this.q.all(promises);
+});
 
 
+
+/*
 SocialMirrorFB.prototype.getData = function(accessToken) {
 
   var deferred = this.q.defer();
@@ -141,6 +174,6 @@ SocialMirrorFB.prototype.getData = function(accessToken) {
   return deferred.promise;
 
 };
-
+*/
 
 module.exports = SocialMirrorFB;

@@ -72,24 +72,14 @@ app.get("/schedule", function(req, res) {
 
 app.get("/refresh/:id", function(req, res) {
 
-  console.log("0");
-
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
 
-    console.log("1");
-
-    smfb.getAllAlbums(accessToken.val())
+    smfb.getAllProfiles(accessToken.val())
       .then(function(fbres) {
-
-        console.log(fbres);
-
         admin.database().enableLogging(true).ref("private/users/" + req.params.id + "/last_data").set({
           'timestamp': (+ new Date()),
           'data': fbres
         }).then(console.log, console.log);
-
-        console.log("3");
-
         res.status(200).json(fbres);
       }, function (errorObject) {
         res.status(500).json({"error": errorObject});
@@ -99,24 +89,13 @@ app.get("/refresh/:id", function(req, res) {
 });
 
 
-app.get("/data/:id", function(req, res) {
+app.get("/photos/:id/:profileId?", function(req, res) {
+
+  var profileId = req.params.profileId? req.params.profileId: 'me';
+  console.log("PROFILEID=" + profileId);
 
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
-    smfb.getData(accessToken.val())
-      .then(function(fbres) {
-        res.status(200).json(fbres);
-      }, function (errorObject) {
-        res.status(500).json({"error": errorObject});
-      });
-  });
-
-});
-
-
-app.get("/photos/:id", function(req, res) {
-
-  admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
-    smfb.getAllPhotos(accessToken.val())
+    smfb.getAllPhotos(accessToken.val(), profileId)
       .then(function(fbres) {
         res.status(200).json(fbres);
       }, function (errorObject) {
@@ -128,8 +107,11 @@ app.get("/photos/:id", function(req, res) {
 
 app.get("/albums/:id", function(req, res) {
 
+  var profileId = req.params.profileId? req.params.profileId: 'me';
+  console.log("PROFILEID=" + profileId);
+
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
-    smfb.getAllAlbums(accessToken.val())
+    smfb.getAllAlbums(accessToken.val(), profileId)
       .then(function(fbres) {
         res.status(200).json(fbres);
       }, function (errorObject) {
@@ -139,7 +121,8 @@ app.get("/albums/:id", function(req, res) {
 
 });
 
-app.get("/accounts/:id", function(req, res) {
+
+app.get("/profiles/:id", function(req, res) {
 
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
     smfb.getAllAccounts(accessToken.val())
@@ -176,14 +159,3 @@ app.get("/extendToken/:id", function(req, res) {
   });
 
 });
-
-
-/*
-app.get("/peng", function(req, res) {
-
-  var newRef = admin.database().ref('/timestamps/peng').push();
-  var timestampSuper = (+ new Date());
-  newRef.set(timestampSuper);
-  res.status(200).json({"result": "listoooeee"});
-});
-*/
