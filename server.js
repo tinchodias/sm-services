@@ -1,15 +1,15 @@
 
 console.log("Starting web...");
 
-/* FACEBOOK */
-var FB = require('fb');
-var fb = new FB.Facebook({
+
+/* SOCIAL MIRROR FACEBOOK */
+var SocialMirrorFB = require("./social-mirror-fb");
+var smfb = new SocialMirrorFB({
     appId      : process.env.FACEBOOK_APP_ID,
     appSecret  : process.env.FACEBOOK_APP_SECRET,
     version    : 'v2.8'
   });
-/* FACEBOOK */
-
+/* SOCIAL MIRROR FACEBOOK */
 
 
 /* FIREBASE */
@@ -23,15 +23,6 @@ admin.initializeApp({
   databaseURL: process.env.DATABASE_URL
 });
 /* FIREBASE */
-
-
-
-/* SOCIAL MIRROR */
-var async = require("async");
-var q = require("q");
-var SocialMirrorFB = require("./social-mirror-fb");
-var smfb = new SocialMirrorFB(FB, async, q);
-/* SOCIAL MIRROR */
 
 
 
@@ -134,7 +125,7 @@ app.get("/profiles/:id", function(req, res) {
 });
 
 
-
+/*
 app.get("/extendToken/:id", function(req, res) {
 
   admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
@@ -157,3 +148,4 @@ app.get("/extendToken/:id", function(req, res) {
   });
 
 });
+*/

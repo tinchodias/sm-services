@@ -1,18 +1,19 @@
 'use strict';
 
+var fbsdk = require('fb');
+var async = require("async");
+var q = require("q");
 
 
-function SocialMirrorFB(fb, async, q) {
-  this.fb = fb;
-  this.async = async;
-  this.q = q;
+function SocialMirrorFB(facebookOptions) {
+  this.fb = new fbsdk.Facebook(facebookOptions);
 }
 
 
 
 SocialMirrorFB.prototype.getOne = function(resource, fields, accessToken, mapFunction) {
 
-  var deferred = this.q.defer();
+  var deferred = q.defer();
   var self = this;
 
   this.fb.api(resource, { fields: fields, access_token: accessToken },
@@ -27,7 +28,7 @@ SocialMirrorFB.prototype.getOne = function(resource, fields, accessToken, mapFun
 
 SocialMirrorFB.prototype.getAll = function(resource, fields, accessToken, mapFunction) {
 
-  var deferred = this.q.defer();
+  var deferred = q.defer();
   var data = [];
   var after = '';
   var self = this;
@@ -136,7 +137,7 @@ SocialMirrorFB.prototype.getMe = function(accessToken) {
 SocialMirrorFB.prototype.getAllProfiles = function(accessToken) {
 
   var promises = [ this.getMe(accessToken) ].concat(this.getAllAccounts(accessToken));
-  return this.q.all(promises);
+  return q.all(promises);
 };
 
 
@@ -144,10 +145,10 @@ SocialMirrorFB.prototype.getAllProfiles = function(accessToken) {
 /*
 SocialMirrorFB.prototype.getData = function(accessToken) {
 
-  var deferred = this.q.defer();
+  var deferred = q.defer();
   var self = this;
 
-  this.async.parallel({
+  async.parallel({
       photos: function(callback) {
         self.getAllPhotos(accessToken).then(
           function(d) { callback(null, d) },
