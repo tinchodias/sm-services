@@ -19,7 +19,7 @@ SocialMirrorFB.prototype.getOne = function(resource, fields, accessToken, mapFun
   this.fb.api(resource, { fields: fields, access_token: accessToken },
     function(response) {
       if (response.error) { deferred.reject(response.error) }
-      else { deferred.resolve(response.map(mapFunction)) }
+      else { deferred.resolve(mapFunction(response)) }
     });
 
   return deferred.promise;
