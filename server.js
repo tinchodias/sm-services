@@ -50,33 +50,13 @@ app.use(function(req, res, next){
 
 
 
-app.get("/schedule", function(req, res) {
+app.get("/schedule/:id", function(req, res) {
 
   var tasksRef = admin.database().ref('queue/tasks');
   tasksRef.push({
-    'scheduled': (+ new Date())
+    'id': req.params.id
   });
-
   res.status(200).end();
-});
-
-
-app.get("/refresh/:id", function(req, res) {
-
-  admin.database().ref("private/users/" + req.params.id + "/last_access_token").once("value", function(accessToken) {
-
-    smfb.profiles(accessToken.val())
-      .then(function(fbres) {
-        admin.database().enableLogging(true).ref("private/users/" + req.params.id + "/last_data").set({
-          'timestamp': (+ new Date()),
-          'data': fbres
-        }).then(console.log, console.log);
-        res.status(200).json(fbres);
-      }, function (errorObject) {
-        res.status(500).json({"error": errorObject});
-      });
-  });
-
 });
 
 

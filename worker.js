@@ -18,16 +18,28 @@ var queueRef = admin.database().ref('queue');
 
 var Queue = require('firebase-queue');
 var queue = new Queue(queueRef, function(data, progress, resolve, reject) {
-  // Read and process task data
-  console.log(data);
 
-  // Do some work
-  progress(50);
+  console.log("processing " + data);
 
-  // Finish the task asynchronously
-  setTimeout(function() {
-    resolve();
-  }, 2000);
+
+  admin.database().ref("private/users/" + data.id + "/last_access_token").once("value", function(accessToken) {
+
+    progress(25);
+
+    smfb.profiles(accessToken.val()).then(function(fbres) {
+
+      progress(50);
+
+      admin.database().ref("private/users/" + data.id + "/last_data").set({
+        'timestamp': (+ new Date()),
+        'data': fbres
+      }).then(resolve, reject);
+
+    }, function (error) {
+      reject(error)
+    });
+  });
+
 
 });
 
