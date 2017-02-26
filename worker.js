@@ -2,6 +2,16 @@
 console.log("Worker starting...");
 
 
+/* SOCIAL MIRROR FACEBOOK */
+var SocialMirrorFB = require("./social-mirror-fb");
+var smfb = new SocialMirrorFB({
+    appId      : process.env.FACEBOOK_APP_ID,
+    appSecret  : process.env.FACEBOOK_APP_SECRET,
+    version    : 'v2.8'
+  });
+/* SOCIAL MIRROR FACEBOOK */
+
+
 /* FIREBASE */
 var admin = require("firebase-admin");
 admin.initializeApp({
