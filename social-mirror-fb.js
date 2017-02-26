@@ -75,7 +75,7 @@ SocialMirrorFB.prototype.getAllPhotos = function(accessToken, profileId = 'me') 
       id: photo.id,
       title: photo.name,
       thumb: photo.picture,
-      album_id: (photo.album ? photo.album.id : '__no_album__'),
+      album_id: photo.album.id, //if !uploaded -> (photo.album ? photo.album.id : '__no_album__'),
       source: (photo.images[0].source),
       height: (photo.images[0].height),
       width: (photo.images[0].width),
@@ -85,7 +85,7 @@ SocialMirrorFB.prototype.getAllPhotos = function(accessToken, profileId = 'me') 
       comments: (photo.comments ? photo.comments.data.length : 0)
     }
   };
-  return this.getAll('/' + profileId + '/photos', 'id,name,picture,album{id},images{source,width,height},created_time,link,reactions.limit(99){type},comments.limit(99){id}', accessToken, photoMapFunction);
+  return this.getAll('/' + profileId + '/photos/uploaded', 'id,name,picture,album{id},images{source,width,height},created_time,link,reactions.limit(99){type},comments.limit(99){id}', accessToken, photoMapFunction);
 };
 
 
